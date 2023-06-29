@@ -3,7 +3,7 @@
 class Constant:
     ts_address = "http://139.196.152.44:32677"
     # ts_address = "http://10.176.122.156:32677"
-    ts_address = "http://120.53.105.200:30467"
+    ts_address = "http://223.193.36.116:32677"
 
     admin_username = "admin"
     admin_pwd = "222222"
