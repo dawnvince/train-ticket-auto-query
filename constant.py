@@ -9,6 +9,8 @@ class Constant:
     admin_pwd = "222222"
     user_username = "fdse_microservice"
     user_pwd = "111111"
+    
+    userfile = "users.txt"
 
 class InitData:
 
@@ -32,7 +34,7 @@ class InitData:
     init_train_trips_id = [
         "G9001", "G9002", "D8003", "Z8004", "T8005", "K8006"
     ]
-    travel_start_time_tick = "1367929200000"
+    travel_start_time_tick = "1845989112"
 
     init_user = {
             "document_type": "1",

@@ -1,9 +1,11 @@
 import logging
 import time
 from queries import Query
+import constant
 
 logger = logging.getLogger("auto-queries")
 datestr = time.strftime("%Y-%m-%d", time.localtime())
+travel_datestr = time.strftime("%Y-%m-%d", time.localtime(int(constant.InitData.travel_start_time_tick)))
 
 class AdminQuery(Query):
 

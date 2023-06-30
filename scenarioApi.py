@@ -1,10 +1,11 @@
 import sys
+import random
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from scenario_component import admin_operations, data_init
+from scenario_component import admin_operations, data_init, getAllLocalUsers
 import time
 
-from scenarios_executable import routine0, routine1, rebook_twice_and_cancel, search_failed_and_preserve, \
+from my_scenarios_executable import routine0, routine1, rebook_twice_and_cancel, search_failed_and_preserve, \
     consign_and_preserve
 
 
@@ -17,6 +18,8 @@ class ScenarioAPI:
         "search_fail_add": search_failed_and_preserve,
         "consign_preserve": consign_and_preserve,
     }
+    scenarios_list = ["admin_operations", "normal_flow", "rebook_flow", "rebook_fail_flow", "search_fail_add", "consign_preserve"]
+    scenarios_list_len = len(scenarios_list)
     peak_start_time = ""
     peak_end_time = ""
     peak_qps = 0
@@ -75,18 +78,25 @@ class ScenarioAPI:
 
     def run(
             self,
-            scenario
+            scenario,
     ):
         start = time.time()
         start_time_array = time.localtime(int(start))
         now_date = time.strftime("%Y-%m-%d %H:%M:%S", start_time_array)
         print(f"start time : {now_date}")
-        func = self.scenarios[scenario]
+        if scenario == "random":
+            pass
+        else:
+            func = self.scenarios[scenario]
 
         endtime_tick = time.mktime(time.strptime(self.endtime, "%Y-%m-%d %H:%M:%S"))
         while time.time() < endtime_tick:
             now_time = time.time()
             division = self.time_divide(now_time)
+            if scenario == "random":
+                idx = random.randint(0, self.scenarios_list_len - 1)
+                func = self.scenarios[self.scenarios_list[idx]]
+                
             if division == "peak":
                 time.sleep(1 / self.peak_qps)
                 self.pool.submit(func)
@@ -158,6 +168,8 @@ if __name__ == '__main__':
         # 其中endtime为%Y-%m-%d %H:%M:%S格式 分成endtimeYMD和endtimeHMS两个参数
         # 各种end\start time为 %H:%M:%S格式
         data_init()
+        getAllLocalUsers()
+        
         if type == '0':
             init_qps, endtimeYMD, endtimeHMS = sys.argv[3:6]
             init_qps = float(init_qps)

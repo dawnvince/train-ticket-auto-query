@@ -42,6 +42,15 @@ def data_init():
                 route_id
                 # InitData.travel_start_time_tick
             )
+        
+        # 更新车次
+        for i in range(len(InitData.train_types)):
+            admin_query.admin_update_travel(
+                InitData.init_train_trips_id[i],
+                InitData.train_types[i],
+                route_id,
+                time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(int(InitData.travel_start_time_tick)))
+            )
 
     # 初始化用户
     user_id = admin_query.admin_add_user(
@@ -234,7 +243,43 @@ def new_user() -> Query:
     query.login(new_username, "111111")
     return query
 
+# ++++++  用户登录  +++++++
+users = []
+user_flag = {}
 
+def reset_users():
+    user_flag = {}
+    users = []
+
+def getAllLocalUsers():
+    reset_users()
+    with open(Constant.userfile, 'r') as f:
+        for line in f:
+            users.append(line.strip())
+            user_flag[line.strip()] = 0
+    
+    print("Finding %d Users\n"%len(users))
+    # return users, user_flag
+
+def rand_user()->Query:
+    l = len(users)
+    rand_idx = random.randint(1, l - 2)
+    while user_flag[users[rand_idx]] != 0:
+        rand_idx = random.randint(1, l - 2)
+    
+    
+    query = Query(Constant.ts_address)
+    query.login(users[rand_idx], "111111")
+    user_flag[users[rand_idx]] = 1
+    print("User:%s login. Rand_idx is %d\n"%(users[rand_idx], rand_idx))
+    return query
+    
+def user_logout(query):
+    if query.uid not in user_flag:
+        print("Logout error!")
+        exit(1)
+    user_flag[query.uid] = 0
+    
 # 用户登陆并成功查询到余票(普通查询):输入起始站and终点站，日期以及查询类型
 # 查询类型： normal , high_speed , cheapest , min_station , quickest
 def query_left_tickets_successfully(query: Query,
