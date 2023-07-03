@@ -3,8 +3,9 @@ from constant import Constant, InitData, AdminData
 from queries import Query
 from utils import *
 import uuid
+import time
 
-def init_users(num=10000):
+def init_users(num=5000):
     admin_query = AdminQuery(Constant.ts_address)
     admin_query.login(Constant.admin_username, Constant.admin_pwd)
     
@@ -15,7 +16,7 @@ def init_users(num=10000):
         res = admin_query.admin_add_user("1", "5599488099312X", "ts@fd1.edu.cn", "111111", new_username, "1")
         
         f.write("%s\n"%new_username)
-        
+        time.sleep(0.5)
         print(f"[new user] : userId : {res.get('userId')} , username : {res.get('userName')} , pwd : {res.get('password')}")
         
     f.close()

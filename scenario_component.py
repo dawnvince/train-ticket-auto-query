@@ -6,11 +6,13 @@ import time
 import logging
 import operator
 import uuid
+import constant
 
 
 logger = logging.getLogger("data_init")
 highspeed_weights = {True: 60, False: 40}
 datestr = time.strftime("%Y-%m-%d", time.localtime())
+# travel_datestr = time.strftime("%Y-%m-%d", time.localtime(int(constant.InitData.travel_start_time_tick)))
 
 # admin相关增删改查：post -> get -> update -> get -> delete
 def data_init():
@@ -49,7 +51,7 @@ def data_init():
                 InitData.init_train_trips_id[i],
                 InitData.train_types[i],
                 route_id,
-                time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(int(InitData.travel_start_time_tick)))
+                time.strftime('%Y-%m-%d',time.localtime()) + " 23:59:59"
             )
 
     # 初始化用户
@@ -100,8 +102,8 @@ def admin_operations():
             admin_query.admin_add_travel(
                 AdminData.admin_train_trips_id[i],
                 AdminData.train_types[i],
-                route_id
-                # AdminData.travel_start_time
+                route_id,
+                time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())
             )
 
     # 初始化用户
@@ -152,7 +154,7 @@ def admin_operations():
                 AdminData.admin_train_update_trip_id[i],
                 AdminData.train_types[i],
                 route_id,
-                AdminData.travel_update_start_time
+                AdminData.time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())
             )
 
     # 更新用户
@@ -264,13 +266,13 @@ def getAllLocalUsers():
 def rand_user()->Query:
     l = len(users)
     rand_idx = random.randint(1, l - 2)
-    while user_flag[users[rand_idx]] != 0:
-        rand_idx = random.randint(1, l - 2)
+    # while user_flag[users[rand_idx]] != 0:
+    #     rand_idx = random.randint(1, l - 2)
     
     
     query = Query(Constant.ts_address)
     query.login(users[rand_idx], "111111")
-    user_flag[users[rand_idx]] = 1
+    # user_flag[users[rand_idx]] = 1
     print("User:%s login. Rand_idx is %d\n"%(users[rand_idx], rand_idx))
     return query
     
@@ -338,6 +340,7 @@ def preserve_and_refresh(query: Query, trip_info: dict,
                          types: tuple = tuple([0, 1])) -> List[dict]:
     # 订票
     query.preserve(trip_info=trip_info, date=date)
+    logger.info(f"Preserve successfully\n")
     # refresh刷新订单并返回所有特定状态的订单信息，注意需要分两次返回，因为高铁动车与其他车型是两个不同的接口
     # 注意此处调用query_orders_all_info接口来获取所有信息，而不是query_orders
     res_high_speed = query.query_orders_all_info(types=types)

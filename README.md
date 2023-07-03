@@ -4,6 +4,14 @@ Train Ticket Auto Query Python Scripts
 
 ## How to use
 
+First, initialize users for high concurrency:
+``bash
+python3 init_user.py
+```
+
+This command would generate users.txt for multiple logging in.
+
+
 The scripts have contained some origin scenarios:
 * "admin_operations"
 * "normal_flow"
@@ -11,6 +19,8 @@ The scripts have contained some origin scenarios:
 * "rebook_fail_flow"
 * "search_fail_add"
 * "consign_preserve"
+
+NEW ADDING RANDOM 
 
 具体使用方法为运行scenarioApi.py脚本并传入以下参数:(type表示参数类型，定义如下)
 

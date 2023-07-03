@@ -1,5 +1,6 @@
 from scenario_component import *
 from constant import *
+import constant
 
 
 # 正常preserve流程

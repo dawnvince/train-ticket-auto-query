@@ -2,9 +2,11 @@ import requests
 import logging
 import time
 from utils import *
+import constant
 
 logger = logging.getLogger("auto-queries")
 datestr = time.strftime("%Y-%m-%d", time.localtime())
+# travel_datestr = time.strftime("%Y-%m-%d", time.localtime(int(constant.InitData.travel_start_time_tick)))
 place_pairs_origin = [("Shang Hai", "Su Zhou"),  # place_pairs （起始地，目的地）对，设立三个待选
                ("Su Zhou", "Shang Hai"),
                ("Nan Jing", "Shang Hai"),

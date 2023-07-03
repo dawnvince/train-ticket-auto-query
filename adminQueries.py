@@ -5,7 +5,7 @@ import constant
 
 logger = logging.getLogger("auto-queries")
 datestr = time.strftime("%Y-%m-%d", time.localtime())
-travel_datestr = time.strftime("%Y-%m-%d", time.localtime(int(constant.InitData.travel_start_time_tick)))
+# travel_datestr = time.strftime("%Y-%m-%d", time.localtime(int(constant.InitData.travel_start_time_tick)))
 
 class AdminQuery(Query):
 
@@ -1044,7 +1044,7 @@ class AdminQuery(Query):
             bought_date = datestr
 
         if travel_date == "":
-            travel_date = datestr
+            travel_date = datestr 
 
         if travel_time == "":
             travel_time = datestr
@@ -1178,6 +1178,8 @@ class AdminQuery(Query):
         if response.status_code != 200 or response.json().get("data") is None:  # 响应错误则忽略并打印日志
             logger.warning(f"request for {url} failed. response data is {response.text}")
             return None
+        else:
+            logger.info(f"Admin successfully delete the order!\n")
 
         # 返回值为删除order的信息
         data = response.json().get("data")  # 用string形式返回

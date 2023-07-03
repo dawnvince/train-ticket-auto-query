@@ -7,6 +7,8 @@ import time
 
 from my_scenarios_executable import routine0, routine1, rebook_twice_and_cancel, search_failed_and_preserve, \
     consign_and_preserve
+from constant import *
+
 
 
 class ScenarioAPI:
@@ -155,9 +157,47 @@ class ScenarioAPI:
     #     end_date=peak_end_time
     # )
     # sched.start()
+    
+# update travel when time is 00:00
+from adminQueries import AdminQuery
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def update_travel():
+    admin_query = AdminQuery(Constant.ts_address)
+    admin_query.login(Constant.admin_username, Constant.admin_pwd)
+    for route_data in InitData.init_route_data:
+        route_id = admin_query.admin_add_route(
+            route_data[0],
+            route_data[1],
+            route_data[2],
+            route_data[3]
+        )["id"]
+        # 增加车次
+        for i in range(len(InitData.train_types)):
+            admin_query.admin_add_travel(
+                InitData.init_train_trips_id[i],
+                InitData.train_types[i],
+                route_id
+                # InitData.travel_start_time_tick
+            )
+        
+        # 更新车次
+        for i in range(len(InitData.train_types)):
+            admin_query.admin_update_travel(
+                InitData.init_train_trips_id[i],
+                InitData.train_types[i],
+                route_id,
+                time.strftime('%Y-%m-%d',time.localtime()) + " 23:59:59"
+            )
+
 
 
 if __name__ == '__main__':
+    # update travel
+    sched = BackgroundScheduler()
+    sched.add_job(update_travel, 'cron', hour=0, minute=0)
+    sched.start()
+    
     try:
         scenario, type = sys.argv[1:3]
         # type
@@ -190,14 +230,14 @@ if __name__ == '__main__':
             endtime = endtimeYMD + " " +  endtimeHMS
             scenario_api = ScenarioAPI(init_qps, endtime, "", "", 0, valley_start_time, valley_end_time, valley_qps)
             scenario_api.run(scenario)
-        init_qps, endtimeYMD, endtimeHMS, peak_start_time, peak_end_time, peak_qps, valley_start_time, valley_end_time, valley_qps = sys.argv[3:12]
-        init_qps = float(init_qps)
-        peak_qps = float(peak_qps)
-        valley_qps = float(valley_qps)
-        endtime = endtimeYMD + " " + endtimeHMS
-        scenario_api = ScenarioAPI(init_qps, endtime, peak_start_time, peak_end_time, peak_qps, valley_start_time,
-                                   valley_end_time, valley_qps)
-        scenario_api.run(scenario)
+        # init_qps, endtimeYMD, endtimeHMS, peak_start_time, peak_end_time, peak_qps, valley_start_time, valley_end_time, valley_qps = sys.argv[3:12]
+        # init_qps = float(init_qps)
+        # peak_qps = float(peak_qps)
+        # valley_qps = float(valley_qps)
+        # endtime = endtimeYMD + " " + endtimeHMS
+        # scenario_api = ScenarioAPI(init_qps, endtime, peak_start_time, peak_end_time, peak_qps, valley_start_time,
+        #                            valley_end_time, valley_qps)
+        # scenario_api.run(scenario)
 
     except Exception as e:
         print(sys.argv)
